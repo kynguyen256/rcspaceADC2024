@@ -12,7 +12,7 @@ public class SimulationManager : MonoBehaviour
 
     //Variables
     public static int globalTime = 8;
-    public int minutesPerFrame = 10;
+    public static int minutesPerFrame = 10;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -33,7 +33,7 @@ public class SimulationManager : MonoBehaviour
 
     // Method used by many other scrips to use the data contained in artemisData
     // Yes, there are some significant short cuts here, but hey, it works
-    public static double getData(int time, int column)
+    public double getData(int time, int column)
     {
         return Convert.ToDouble(artemisData[(time-6)*14 + column]);
         // Note: 6 shifts data columns to align with time (kinda) and 14 is the number of collumns
