@@ -15,6 +15,10 @@ public class RocketPathControl : MonoBehaviour
     public float posY;
     public float posZ;
     public Vector3 scaledPos = new Vector3();
+    public float directionX;
+    public float directionY;
+    public float directionZ;
+    public Vector3 direction = new Vector3();
 
     public float prevPosX; // previous position vars
     public float prevPosY;
@@ -31,24 +35,46 @@ public class RocketPathControl : MonoBehaviour
         prevPosX = (float)simManager.getData(SimulationManager.globalTime,1);
         prevPosY = (float)simManager.getData(SimulationManager.globalTime,2);
         prevPosZ = (float)simManager.getData(SimulationManager.globalTime,3);
+        prevPos = new Vector3(posX, posY, posZ);
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Calculate new position
         posX = (float)simManager.getData(SimulationManager.globalTime,1);
         posY = (float)simManager.getData(SimulationManager.globalTime,2);
         posZ = (float)simManager.getData(SimulationManager.globalTime,3);
         scaledPos = new Vector3(posX/100, posY/100, posZ/100);
-
+        // Go to new position
         transform.position = scaledPos;
 
+        // Struggling to figure out the rotation here:
+
+        // METHOD 1.0 (technically more fancy, and hey, it uses the velocity data)
+        
+        // Calculate new rotation (based on the deretion of velocity vector)
+        directionX = (float)simManager.getData(SimulationManager.globalTime,4);
+        directionY = (float)simManager.getData(SimulationManager.globalTime,5);
+        directionZ = (float)simManager.getData(SimulationManager.globalTime,6);
+        direction = new Vector3(directionX, directionY, directionZ);
+        // Rotate towards velocity projection from position
+        transform.rotation = Quaternion.LookRotation(scaledPos + direction);
+
+        // METHOD 2.0 (has the same bad reults as above for some reason)
+        /*
+        transform.rotation = Quaternion.LookRotation(scaledPos + prevPos);
+        */
+
+        // Output total distance traveled (eventually will be added to UI)
         distance += Distance(posX,posY,posZ,prevPosX,prevPosY,prevPosZ);
         Debug.Log("Distance: " + distance + "km");
 
+        // Update previous position to current position
         prevPosX = posX;
         prevPosY = posY;
         prevPosZ = posZ;
+        prevPos = new Vector3(posX, posY, posZ);
 
         GameObject pointClone = Instantiate(pathPoint, scaledPos, referencePath.transform.rotation);
     }

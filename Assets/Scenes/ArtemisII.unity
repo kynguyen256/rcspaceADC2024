@@ -286,6 +286,10 @@ MonoBehaviour:
   posY: 0
   posZ: 0
   scaledPos: {x: 0, y: 0, z: 0}
+  directionX: 0
+  directionY: 0
+  directionZ: 0
+  direction: {x: 0, y: 0, z: 0}
   prevPosX: 0
   prevPosY: 0
   prevPosZ: 0
@@ -375,7 +379,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 63.78, y: 63.78, z: 63.78}
-  m_LocalScale: {x: 30, y: 12, z: 12}
+  m_LocalScale: {x: 30, y: 30, z: 90}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
