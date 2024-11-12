@@ -44,7 +44,7 @@ public class RocketPathControl : MonoBehaviour
         transform.position = pos;
 
         distance = Distance(posX,posY,posZ,prevPosX,prevPosY,prevPosZ);
-        Debug.Log("Distance: " + distance);
+        Debug.Log("Distance: " + distance + "km");
 
         prevPosX = posX;
         prevPosY = posY;
@@ -58,7 +58,7 @@ public class RocketPathControl : MonoBehaviour
         double deltaX = Math.Pow(x - px,2);
         double deltaY = Math.Pow(y - py,2);
         double deltaZ = Math.Pow(z - pz,2);
-        dist = Math.Sqrt(deltaX + deltaY + deltaZ);
+        dist = 100 * Math.Sqrt(deltaX + deltaY + deltaZ);
         return dist;
     }
 }
