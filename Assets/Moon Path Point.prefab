@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2553002166129378083}
   - component: {fileID: 4696285575189365733}
   m_Layer: 0
-  m_Name: Rocket Path Point
+  m_Name: Moon Path Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 26.6, y: 0.41826725, z: 44.7}
-  m_LocalScale: {x: 12, y: 12, z: 12}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 387335816706e6e42b45fc539837f041, type: 2}
+  - {fileID: 2100000, guid: c414eea23d0b12746b83161afb09cc83, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
