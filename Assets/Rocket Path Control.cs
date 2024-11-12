@@ -14,7 +14,7 @@ public class RocketPathControl : MonoBehaviour
     public float posX;
     public float posY;
     public float posZ;
-    public Vector3 pos = new Vector3();
+    public Vector3 scaledPos = new Vector3();
 
     public float prevPosX; // previous position vars
     public float prevPosY;
@@ -39,18 +39,18 @@ public class RocketPathControl : MonoBehaviour
         posX = (float)simManager.getData(SimulationManager.globalTime,1);
         posY = (float)simManager.getData(SimulationManager.globalTime,2);
         posZ = (float)simManager.getData(SimulationManager.globalTime,3);
-        pos = new Vector3(posX/100, posY/100, posZ/100);
+        scaledPos = new Vector3(posX/100, posY/100, posZ/100);
 
-        transform.position = pos;
+        transform.position = scaledPos;
 
-        distance = Distance(posX,posY,posZ,prevPosX,prevPosY,prevPosZ);
+        distance += Distance(posX,posY,posZ,prevPosX,prevPosY,prevPosZ);
         Debug.Log("Distance: " + distance + "km");
 
         prevPosX = posX;
         prevPosY = posY;
         prevPosZ = posZ;
 
-        GameObject pointClone = Instantiate(pathPoint, pos, referencePath.transform.rotation);
+        GameObject pointClone = Instantiate(pathPoint, scaledPos, referencePath.transform.rotation);
     }
 
     static double Distance(float x, float y, float z, float px, float py, float pz) {
@@ -58,7 +58,7 @@ public class RocketPathControl : MonoBehaviour
         double deltaX = Math.Pow(x - px,2);
         double deltaY = Math.Pow(y - py,2);
         double deltaZ = Math.Pow(z - pz,2);
-        dist = 100 * Math.Sqrt(deltaX + deltaY + deltaZ);
+        dist = Math.Sqrt(deltaX + deltaY + deltaZ);
         return dist;
     }
 }

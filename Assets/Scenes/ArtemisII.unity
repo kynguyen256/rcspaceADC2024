@@ -285,7 +285,12 @@ MonoBehaviour:
   posX: 0
   posY: 0
   posZ: 0
-  pos: {x: 0, y: 0, z: 0}
+  scaledPos: {x: 0, y: 0, z: 0}
+  prevPosX: 0
+  prevPosY: 0
+  prevPosZ: 0
+  prevPos: {x: 0, y: 0, z: 0}
+  distance: 0
 --- !u!65 &857286255
 BoxCollider:
   m_ObjectHideFlags: 0
