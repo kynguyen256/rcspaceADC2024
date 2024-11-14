@@ -49,7 +49,7 @@ public class SimulationManager : MonoBehaviour
     // Yes, there are some significant short cuts here, but hey, it works
     public double getData(int time, int column)
     {
-        return Convert.ToDouble(artemisData[(time-6)*14 + column]);
-        // Note: 6 shifts data columns to align with time (kinda) and 14 is the number of collumns
+        return Convert.ToDouble(artemisData[(time-6)*16 + column]);
+        // Note: 6 shifts data columns to align with time (kinda) and 16 is the number of collumns
     }
 }

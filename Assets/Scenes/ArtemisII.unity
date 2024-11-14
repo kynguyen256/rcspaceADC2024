@@ -242,7 +242,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathPoint: {fileID: 1812268610291249955, guid: 22c51cdbf5f64af4f911dd5c5e47bd65, type: 3}
   referencePath: {fileID: 726193188}
-  simManObject: {fileID: 1525060592}
+  bonusDatasheet: {fileID: 4900000, guid: 2d77643119a544b40a88856c6f7efb35, type: 3}
   posX: 0
   posY: 0
   posZ: 0
@@ -565,7 +565,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b37f9fa5bf51e64c8a70514ae40d1c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  artemisDatasheet: {fileID: 4900000, guid: 2d77643119a544b40a88856c6f7efb35, type: 3}
+  artemisDatasheet: {fileID: 4900000, guid: 3cd8bd19cd28a5d4f88bbf26b94fbfc1, type: 3}
   pointStage1: {fileID: 1812268610291249955, guid: 8461f25443f924145bb1fbaa6d9afba9, type: 3}
   pointStage2: {fileID: 1812268610291249955, guid: 6218a055e8d58064fa952196bceec70e, type: 3}
   skipPoints: 10
