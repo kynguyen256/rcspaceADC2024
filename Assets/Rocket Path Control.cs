@@ -18,7 +18,7 @@ public class RocketPathControl : MonoBehaviour
     public float directionX;
     public float directionY;
     public float directionZ;
-    public Vector3 direction = new Vector3();
+    public Vector3 scaledDirection = new Vector3();
 
     public float prevPosX; // previous position vars
     public float prevPosY;
@@ -57,14 +57,13 @@ public class RocketPathControl : MonoBehaviour
         directionX = (float)simManager.getData(SimulationManager.globalTime,4);
         directionY = (float)simManager.getData(SimulationManager.globalTime,5);
         directionZ = (float)simManager.getData(SimulationManager.globalTime,6);
-        direction = new Vector3(directionX, directionY, directionZ);
+        scaledDirection = new Vector3(directionX/100, directionY/100, directionZ/100);
         // Rotate towards velocity projection from position
-        transform.rotation = Quaternion.LookRotation(scaledPos + direction);
-
-        // METHOD 2.0 (has the same bad reults as above for some reason)
-        /*
-        transform.rotation = Quaternion.LookRotation(scaledPos + prevPos);
-        */
+        transform.rotation = Quaternion.LookRotation(scaledDirection);
+        
+        // METHOD 2.0 THIS WORKS NOW (but not as cool, so we won't use it)
+        //transform.rotation = Quaternion.LookRotation(scaledPos - prevPos/100);
+        
 
         // Output total distance traveled (eventually will be added to UI)
         distance += Distance(posX,posY,posZ,prevPosX,prevPosY,prevPosZ);

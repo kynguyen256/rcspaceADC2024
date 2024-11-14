@@ -14,7 +14,7 @@ public class SimulationManager : MonoBehaviour
 
     //Variables
     public static int globalTime = 8;
-    public static int minutesPerFrame = 10;
+    public int minutesPerFrame = 10;
     public int skipPoints = 10;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

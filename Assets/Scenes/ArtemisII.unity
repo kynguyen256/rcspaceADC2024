@@ -289,7 +289,7 @@ MonoBehaviour:
   directionX: 0
   directionY: 0
   directionZ: 0
-  direction: {x: 0, y: 0, z: 0}
+  scaledDirection: {x: 0, y: 0, z: 0}
   prevPosX: 0
   prevPosY: 0
   prevPosZ: 0
@@ -568,6 +568,7 @@ MonoBehaviour:
   artemisDatasheet: {fileID: 4900000, guid: 3cd8bd19cd28a5d4f88bbf26b94fbfc1, type: 3}
   pointStage1: {fileID: 1812268610291249955, guid: 8461f25443f924145bb1fbaa6d9afba9, type: 3}
   pointStage2: {fileID: 1812268610291249955, guid: 6218a055e8d58064fa952196bceec70e, type: 3}
+  minutesPerFrame: 1
   skipPoints: 10
 --- !u!1 &1561483213
 GameObject:
