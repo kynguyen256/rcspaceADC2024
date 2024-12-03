@@ -13,6 +13,8 @@ public class VelocityVector : MonoBehaviour
     public float len; 
     public Vector3 scaler = new Vector3();
 
+    public bool gone = true;
+
     void Start() 
     {
         simManager = simManObject.GetComponent<SimulationManager>();
@@ -27,9 +29,19 @@ public class VelocityVector : MonoBehaviour
         direction = new Vector3(directionX, directionY, directionZ);
         // transform.rotation = Quaternion.LookRotation(direction); 
         
-        len = (float)0.5 * direction.magnitude;
+        len = (float)0.1 * direction.magnitude;
         scaler = new Vector3(len,(float)0.5,(float)0.5);
         transform.localScale = scaler;
         Debug.Log(scaler);
+    }
+
+    public void disappear() {
+        if (gone == true) {
+            gameObject.SetActive(false);
+            gone = false;
+        } else {
+            gameObject.SetActive(true);
+            gone = true;
+        }
     }
 }
