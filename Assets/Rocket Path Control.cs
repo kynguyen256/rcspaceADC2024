@@ -64,7 +64,7 @@ public class RocketPathControl : MonoBehaviour
         
         // Output total distance traveled (eventually will be added to UI)
         distance += Distance(posX,posY,posZ,prevPosX,prevPosY,prevPosZ);
-        Debug.Log("Distance: " + distance + "km");
+        // Debug.Log("Distance: " + distance + "km");
 
         // Update previous position to current position
         prevPosX = posX;
