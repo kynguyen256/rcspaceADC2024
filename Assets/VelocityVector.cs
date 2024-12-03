@@ -27,10 +27,9 @@ public class VelocityVector : MonoBehaviour
         direction = new Vector3(directionX, directionY, directionZ);
         // transform.rotation = Quaternion.LookRotation(direction); 
         
-        len = direction.magnitude;
+        len = (float)0.5 * direction.magnitude;
         scaler = new Vector3(len,(float)0.5,(float)0.5);
         transform.localScale = scaler;
         Debug.Log(scaler);
     }
-
 }
