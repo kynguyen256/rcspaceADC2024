@@ -746,6 +746,8 @@ MonoBehaviour:
   prevPosZ: 0
   prevPos: {x: 0, y: 0, z: 0}
   distance: 0
+  frameCounter: 0
+  skipPoints: 1
 --- !u!65 &857286255
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1136,6 +1138,7 @@ MonoBehaviour:
   direction: {x: 0, y: 0, z: 0}
   len: 0
   scaler: {x: 0, y: 0, z: 0}
+  gone: 1
 --- !u!1 &1230394540
 GameObject:
   m_ObjectHideFlags: 0
@@ -1538,7 +1541,7 @@ MonoBehaviour:
   pointStage1: {fileID: 1812268610291249955, guid: 8461f25443f924145bb1fbaa6d9afba9, type: 3}
   pointStage2: {fileID: 1812268610291249955, guid: 6218a055e8d58064fa952196bceec70e, type: 3}
   minutesPerFrame: 1
-  skipPoints: 10
+  skipPoints: 5
 --- !u!1 &1561483213
 GameObject:
   m_ObjectHideFlags: 0

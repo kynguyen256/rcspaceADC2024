@@ -26,6 +26,8 @@ public class RocketPathControl : MonoBehaviour
     public Vector3 prevPos = new Vector3();
 
     public double distance;
+    public int frameCounter = 0;
+    public int skipPoints;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -71,11 +73,15 @@ public class RocketPathControl : MonoBehaviour
         prevPosY = posY;
         prevPosZ = posZ;
         prevPos = new Vector3(posX, posY, posZ);
-
-        GameObject pointClone = Instantiate(pathPoint, scaledPos, referencePath.transform.rotation);
+        if (frameCounter == skipPoints)
+        {
+            GameObject pointClone = Instantiate(pathPoint, scaledPos, referencePath.transform.rotation);
+            frameCounter = 0;
+        }
+        frameCounter++;
     }
 
-    static double Distance(float x, float y, float z, float px, float py, float pz) {
+    public static double Distance(float x, float y, float z, float px, float py, float pz) {
         double dist;
         double deltaX = Math.Pow(x - px,2);
         double deltaY = Math.Pow(y - py,2);
