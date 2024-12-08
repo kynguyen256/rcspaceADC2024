@@ -10,6 +10,8 @@ public class CommunicationLink
     private string name;
     private int availibilityColumn;
     public bool isAvailible;
+    private bool wasAvailible;
+    public bool changedAvailibility;
     private int distanceColumn;
     private double distance; 
     private int antennaDiameter;
@@ -21,6 +23,7 @@ public class CommunicationLink
         this.name = name;
         this.availibilityColumn = availibilityColumn;
         isAvailible = false;
+        wasAvailible = false;
         this.distanceColumn = distanceColumn;
         distance = double.MaxValue;
         this.antennaDiameter = antennaDiameter;
@@ -28,8 +31,6 @@ public class CommunicationLink
 
     public void updateData(int time)
     {
-        // Simulation manager reference object
-
         // Check to see if satellite is availible by checing the availibity collumn of Artemis data
         isAvailible = (SimulationManager.getData(time, availibilityColumn)==1);
         // If satellite is availible, update distance
@@ -41,7 +42,13 @@ public class CommunicationLink
         {
             distance = double.MaxValue;
         }
+        // Update linkBudget
         linkBudget = calculateLinkBudget();
+
+        // Check to see if there has been a change in availibility
+        changedAvailibility = (isAvailible != wasAvailible);
+        // Set wasAvailible to current availibility (to compare next frame if a change)
+        wasAvailible = isAvailible;
     }
 
     // Yup, that's right, I made a whole method devoted to the link budget equation 
@@ -63,6 +70,12 @@ public class CommunicationLink
     // For Ms. Kikuchi :)
     public string toString()
     {
-        return $"{name} is availible: {isAvailible} and has a link budget of: {linkBudget}kb/s.";
+        return $"{name} has a link budget of: {linkBudget}kb/s.";
+    }
+
+    // To distinguish it
+    public string priorityToString()
+    {
+        return $"Thus priority satetlite is {name} and has a link budget of: {linkBudget}kb/s.";
     }
 }

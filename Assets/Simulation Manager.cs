@@ -29,6 +29,8 @@ public class SimulationManager : MonoBehaviour
     CommunicationLink DS54 = new CommunicationLink("DS54",10,11,34);
     CommunicationLink DS24 = new CommunicationLink("DS24",12,13,34);
     CommunicationLink DS34 = new CommunicationLink("DS34",14,15,34);
+    // Initilaize satalite object that will reference the priotized satatlite (begin with WPSA)
+    CommunicationLink priority;
     
     void UpdateSpeed()
     {
@@ -60,6 +62,9 @@ public class SimulationManager : MonoBehaviour
         }
         Debug.Log("Done creating path!");
 
+        // Stuff related to satellites
+        priority = WPSA;
+
         // Stuff related to UI
         TimeSlider = GameObject.Find("TimeMultSlider").GetComponent<Slider>();
         TimeText = GameObject.Find("SpeedText").GetComponent<TMP_Text>();
@@ -80,7 +85,6 @@ public class SimulationManager : MonoBehaviour
         // This simulation manager runs the global time.
         // Currently it just increases globalTime each frame, but we will implement UI controls later 
         // which will enable further manipulation of time (pause/play, slider, playback speed,etc.)
-        Debug.Log("SpeedMultiplier: " + speedMultiplier.ToString());
         globalTime += 1*speedMultiplier;
         // IndexOutOfRange exception was getting annoying, thus:
         if (globalTime > 12982)
@@ -94,6 +98,7 @@ public class SimulationManager : MonoBehaviour
         DS54.updateData(globalTime);
         DS24.updateData(globalTime);
         DS34.updateData(globalTime);
+        priority.updateData(globalTime);
         // And print it out! (if they are availible)
         if (WPSA.isAvailible)
         {
@@ -110,6 +115,37 @@ public class SimulationManager : MonoBehaviour
         if (DS24.isAvailible)
         {
             Debug.Log(DS24.toString());
+        }
+
+        // Update priority satellite
+        priority = prioritize(priority, WPSA, DS54, DS34, DS24);
+        // Let's print it out
+        Debug.Log(priority.priorityToString());
+    }
+
+    // Kinda clunky to understand, probably a more "efficient" and easier to understand way to do this
+    public static CommunicationLink prioritize(CommunicationLink priorized, CommunicationLink satellite1, CommunicationLink satellite2, CommunicationLink satellite3, CommunicationLink satellite4)
+    {
+        // Check each satallite for change in availibility, and see if it is beneficial to switch to it
+        if (satellite1.isAvailible && satellite1.linkBudget > priorized.linkBudget)
+        {
+            return satellite1;
+        }
+        if (satellite2.isAvailible && satellite2.linkBudget > priorized.linkBudget)
+        {
+            return satellite2;
+        }
+        if (satellite3.isAvailible && satellite3.linkBudget > priorized.linkBudget)
+        {
+            return satellite3;
+        }
+        if (satellite4.isAvailible && satellite4.linkBudget > priorized.linkBudget)
+        {
+            return satellite4;
+        }
+        else
+        {
+            return priorized;
         }
     }
 
