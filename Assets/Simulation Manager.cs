@@ -60,6 +60,7 @@ public class SimulationManager : MonoBehaviour
         }
         Debug.Log("Done creating path!");
 
+        // Stuff related to UI
         TimeSlider = GameObject.Find("TimeMultSlider").GetComponent<Slider>();
         TimeText = GameObject.Find("SpeedText").GetComponent<TMP_Text>();
 
@@ -81,6 +82,11 @@ public class SimulationManager : MonoBehaviour
         // which will enable further manipulation of time (pause/play, slider, playback speed,etc.)
         Debug.Log("SpeedMultiplier: " + speedMultiplier.ToString());
         globalTime += 1*speedMultiplier;
+        // IndexOutOfRange exception was getting annoying, thus:
+        if (globalTime > 12982)
+        {
+            globalTime = 12982;
+        }
         Debug.Log("globalTime: " + globalTime);
 
         // Alright, lets update those satellites!
@@ -115,49 +121,3 @@ public class SimulationManager : MonoBehaviour
         // Note: 6 shifts data columns to align with time (kinda) and 16 is the number of collumns
     }
 }
-
-
-// Okay, this all didn't really work...
-/*
-public class CommunicationLink 
-{
-    // Instance variables
-    private int availibilityColumn;
-    private bool isAvailible;
-    private int distanceColumn;
-    private double distance; 
-
-    // Making a constructor (feels like AP CSA)
-    public CommunicationLink(int availibilityColumn, int distanceColumn)
-    {
-        this.availibilityColumn = availibilityColumn;
-        isAvailible = false;
-        this.distanceColumn = distanceColumn;
-        distance = double.MaxValue;
-    }
-
-    public void checkData()
-    {
-        // Simulation manager reference object
-        var manager = new SimulationManager();
-
-        // Check to see if satellite is availible by checing the availibity collumn of Artemis data
-        isAvailible = (manager.getData(manager.getGlobalTime(), availibilityColumn)==1);
-        // If satellite is availible, update distance
-        if (isAvailible)
-        {
-            distance = manager.getData(manager.getGlobalTime(), distanceColumn);
-        }
-        else
-        {
-            distance = double.MaxValue;
-        }
-    }
-
-    // For Ms. Kikuchi :)
-    public string toString()
-    {
-        return $"Availible: {isAvailible} Distance: {distance}km away.";
-    }
-}
-*/
