@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 using System;
 using System.Globalization;
 using System.Collections;
@@ -11,10 +13,13 @@ public class SimulationManager : MonoBehaviour
     public static string [] artemisData;
     public GameObject pointStage1; // Prefab used to trace out stage 1
     public GameObject pointStage2; // Prefab used to trace out stage 2
+    public Slider TimeSlider;
+    public TMP_Text TimeText;
 
     //Variables
     public static int globalTime = 8;
-    public int minutesPerFrame = 10;
+    public int minutesPerFrame = 1;
+    public int speedMultiplier; // Speed multiplier implemented so our slider sys works (hopefully!!!!)
     public int skipPoints;
 
     // Variables/Objects related to satellite availibility
@@ -25,10 +30,16 @@ public class SimulationManager : MonoBehaviour
     CommunicationLink DS24 = new CommunicationLink("DS24",12,13,34);
     CommunicationLink DS34 = new CommunicationLink("DS34",14,15,34);
     
+    void UpdateSpeed()
+    {
+        speedMultiplier = (int) TimeSlider.value;
+        TimeText.text = "Speed: "+speedMultiplier.ToString()+"x";
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Application.targetFrameRate = 60;
         double velocityMagnitude = 1;
         // Only time in the entire program where we have to splice the data. 
         // All other objects will call upon this array to get data from, using method below.
@@ -48,6 +59,18 @@ public class SimulationManager : MonoBehaviour
             Debug.Log(velocityMagnitude);
         }
         Debug.Log("Done creating path!");
+
+        TimeSlider = GameObject.Find("TimeMultSlider").GetComponent<Slider>();
+        TimeText = GameObject.Find("SpeedText").GetComponent<TMP_Text>();
+
+        Debug.Log(TimeText.text);
+
+        minutesPerFrame = 1;
+        speedMultiplier = 0;
+
+        TimeSlider.onValueChanged.AddListener(delegate {
+            UpdateSpeed();
+        });
     }
 
     // Update is called once per frame
@@ -56,7 +79,8 @@ public class SimulationManager : MonoBehaviour
         // This simulation manager runs the global time.
         // Currently it just increases globalTime each frame, but we will implement UI controls later 
         // which will enable further manipulation of time (pause/play, slider, playback speed,etc.)
-        globalTime += minutesPerFrame;
+        Debug.Log("SpeedMultiplier: " + speedMultiplier.ToString());
+        globalTime += 1*speedMultiplier;
         Debug.Log("globalTime: " + globalTime);
 
         // Alright, lets update those satellites!
