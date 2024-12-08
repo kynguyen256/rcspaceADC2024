@@ -17,6 +17,15 @@ public class SimulationManager : MonoBehaviour
     public int minutesPerFrame = 10;
     public int skipPoints;
 
+    // Variables/Objects related to satellite availibility
+    // Initialize the satalite objects
+    // Note : name, availibility collumn, distance collumn, antenna diameter
+    CommunicationLink WPSA = new CommunicationLink("WPSA",8,9,12);
+    CommunicationLink DS54 = new CommunicationLink("DS54",10,11,34);
+    CommunicationLink DS24 = new CommunicationLink("DS24",12,13,34);
+    CommunicationLink DS34 = new CommunicationLink("DS34",14,15,34);
+    
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -45,16 +54,86 @@ public class SimulationManager : MonoBehaviour
     void Update()
     {
         // This simulation manager runs the global time.
-        // Currently it just increases globalTime each frame, but we will implement UI controls later
+        // Currently it just increases globalTime each frame, but we will implement UI controls later 
+        // which will enable further manipulation of time (pause/play, slider, playback speed,etc.)
         globalTime += minutesPerFrame;
         Debug.Log("globalTime: " + globalTime);
+
+        // Alright, lets update those satellites!
+        WPSA.updateData(globalTime);
+        DS54.updateData(globalTime);
+        DS24.updateData(globalTime);
+        DS34.updateData(globalTime);
+        // And print it out! (if they are availible)
+        if (WPSA.isAvailible)
+        {
+            Debug.Log(WPSA.toString());
+        }
+        if (DS54.isAvailible)
+        {
+            Debug.Log(DS54.toString());
+        }
+        if (DS34.isAvailible)
+        {
+            Debug.Log(DS34.toString());
+        }
+        if (DS24.isAvailible)
+        {
+            Debug.Log(DS24.toString());
+        }
     }
 
     // Method used by many other scrips to use the data contained in artemisData
     // Yes, there are some significant short cuts here, but hey, it works
-    public double getData(int time, int column)
+    public static double getData(int time, int column)
     {
         return Convert.ToDouble(artemisData[(time-6)*16 + column]);
         // Note: 6 shifts data columns to align with time (kinda) and 16 is the number of collumns
     }
 }
+
+
+// Okay, this all didn't really work...
+/*
+public class CommunicationLink 
+{
+    // Instance variables
+    private int availibilityColumn;
+    private bool isAvailible;
+    private int distanceColumn;
+    private double distance; 
+
+    // Making a constructor (feels like AP CSA)
+    public CommunicationLink(int availibilityColumn, int distanceColumn)
+    {
+        this.availibilityColumn = availibilityColumn;
+        isAvailible = false;
+        this.distanceColumn = distanceColumn;
+        distance = double.MaxValue;
+    }
+
+    public void checkData()
+    {
+        // Simulation manager reference object
+        var manager = new SimulationManager();
+
+        // Check to see if satellite is availible by checing the availibity collumn of Artemis data
+        isAvailible = (manager.getData(manager.getGlobalTime(), availibilityColumn)==1);
+        // If satellite is availible, update distance
+        if (isAvailible)
+        {
+            distance = manager.getData(manager.getGlobalTime(), distanceColumn);
+        }
+        else
+        {
+            distance = double.MaxValue;
+        }
+    }
+
+    // For Ms. Kikuchi :)
+    public string toString()
+    {
+        return $"Availible: {isAvailible} Distance: {distance}km away.";
+    }
+}
+*/

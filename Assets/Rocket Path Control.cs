@@ -7,8 +7,8 @@ public class RocketPathControl : MonoBehaviour
     // Game Objects to reference
     public GameObject pathPoint; // Prefab sphere we will use to "draw" the path
     public GameObject referencePath; // In this case the rocket itself because that is the position data we want the path to follow
-    public GameObject simManObject; // The Simulation Manager
-    SimulationManager simManager; // We need to create an object in this script so that we can call Simulation Manager's methods
+    //public GameObject simManObject; // The Simulation Manager
+    //SimulationManager simManager; // We need to create an object in this script so that we can call Simulation Manager's methods
     
     // Variables
     public float posX;
@@ -32,11 +32,11 @@ public class RocketPathControl : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        simManager = simManObject.GetComponent<SimulationManager>();
+        //simManager = simManObject.GetComponent<SimulationManager>();
         // init previous position to first position vars
-        prevPosX = (float)simManager.getData(SimulationManager.globalTime,1);
-        prevPosY = (float)simManager.getData(SimulationManager.globalTime,2);
-        prevPosZ = (float)simManager.getData(SimulationManager.globalTime,3);
+        prevPosX = (float)SimulationManager.getData(SimulationManager.globalTime,1);
+        prevPosY = (float)SimulationManager.getData(SimulationManager.globalTime,2);
+        prevPosZ = (float)SimulationManager.getData(SimulationManager.globalTime,3);
         prevPos = new Vector3(posX, posY, posZ);
     }
 
@@ -44,9 +44,9 @@ public class RocketPathControl : MonoBehaviour
     void Update()
     {
         // Calculate new position
-        posX = (float)simManager.getData(SimulationManager.globalTime,1);
-        posY = (float)simManager.getData(SimulationManager.globalTime,2);
-        posZ = (float)simManager.getData(SimulationManager.globalTime,3);
+        posX = (float)SimulationManager.getData(SimulationManager.globalTime,1);
+        posY = (float)SimulationManager.getData(SimulationManager.globalTime,2);
+        posZ = (float)SimulationManager.getData(SimulationManager.globalTime,3);
         scaledPos = new Vector3(posX/100, posY/100, posZ/100);
         // Go to new position
         transform.position = scaledPos;
@@ -54,9 +54,9 @@ public class RocketPathControl : MonoBehaviour
         // METHOD 1.0 THIS WORKS NOW (technically more fancy, and hey, it uses the velocity data)
         
         // Calculate new rotation (based on the deretion of velocity vector)
-        directionX = (float)simManager.getData(SimulationManager.globalTime,4);
-        directionY = (float)simManager.getData(SimulationManager.globalTime,5);
-        directionZ = (float)simManager.getData(SimulationManager.globalTime,6);
+        directionX = (float)SimulationManager.getData(SimulationManager.globalTime,4);
+        directionY = (float)SimulationManager.getData(SimulationManager.globalTime,5);
+        directionZ = (float)SimulationManager.getData(SimulationManager.globalTime,6);
         direction = new Vector3(directionX, directionY, directionZ);
         // Orient rotation to point in the direction of velocity vector (b/c it is tanget to the curve)
         transform.rotation = Quaternion.LookRotation(direction);

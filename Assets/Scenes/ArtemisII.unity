@@ -732,7 +732,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pathPoint: {fileID: 1812268610291249955, guid: c4f932083d96e2840854d52a042c2ab9, type: 3}
   referencePath: {fileID: 857286253}
-  simManObject: {fileID: 1525060592}
   posX: 0
   posY: 0
   posZ: 0
@@ -1131,7 +1130,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c74b0b857bc3394089e7ef9e53430d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simManObject: {fileID: 1525060592}
   directionX: 0
   directionY: 0
   directionZ: 0
