@@ -55,7 +55,7 @@ public class CommunicationLink
     public double calculateLinkBudget()
     {
         // Here goes nothing...
-        double calculation = Math.Pow(10, 0.1*(10 + 9 - 19.43 + 10*Math.Log10(0.55*(Math.Pow((Math.PI*antennaDiameter)/0.136363636,2.0))) - 20*Math.Log10((4000*Math.PI*distance)/0.136363636) - (-228.6) - 10*Math.Log10(22)))/1000;
+        double calculation = Math.Pow(10, 0.1*(10 + 9 - 19.43 + 10*Math.Log10(0.55*(Math.Pow((Math.PI*antennaDiameter)/0.136363636,2.0))) - 20*Math.Log10((4000*Math.PI*distance)/0.136363636) - (-228.6) - 10*Math.Log10(222)))/1000;
         // "we must limit the rate at which Orion transmits data to 10 Mbps" according to the ADC handbook
         if (calculation > 10000)
         {
