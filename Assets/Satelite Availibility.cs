@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 using System;
 using System.Globalization;
 using System.Collections;
@@ -7,7 +9,7 @@ using System.Collections.Generic;
 public class CommunicationLink
 {
     // Instance variables (Sorry Ms. Kikuchi, I'm making some of them public. No mutators/accessor methods)
-    private string name;
+    public string name; // Why do we need private names????
     private int availibilityColumn;
     public bool isAvailible;
     private bool wasAvailible;
@@ -16,6 +18,7 @@ public class CommunicationLink
     private double distance; 
     private int antennaDiameter;
     public double linkBudget;
+    public TMP_Text DSNLinkObj;
 
     // Making a constructor (feels like AP CSA)
     public CommunicationLink(string name, int availibilityColumn, int distanceColumn, int antennaDiameter)
@@ -44,6 +47,15 @@ public class CommunicationLink
         }
         // Update linkBudget
         linkBudget = calculateLinkBudget();
+        DSNLinkObj = GameObject.Find(name).GetComponent<TMP_Text>();
+        DSNLinkObj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = $"{Math.Round(linkBudget, 2)}kb/s";
+        
+        if(linkBudget > 0)
+        {
+            DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.green;
+        } else {
+            DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.red;
+        }
 
         // Check to see if there has been a change in availibility
         changedAvailibility = (isAvailible != wasAvailible);

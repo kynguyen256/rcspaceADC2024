@@ -15,6 +15,7 @@ public class SimulationManager : MonoBehaviour
     public GameObject pointStage2; // Prefab used to trace out stage 2
     public Slider TimeSlider;
     public TMP_Text TimeText;
+    public TMP_Text DSNPriority;
 
     //Variables
     public static int globalTime = 8;
@@ -68,6 +69,7 @@ public class SimulationManager : MonoBehaviour
         // Stuff related to UI
         TimeSlider = GameObject.Find("TimeMultSlider").GetComponent<Slider>();
         TimeText = GameObject.Find("SpeedText").GetComponent<TMP_Text>();
+        DSNPriority = GameObject.Find("Priority").GetComponent<TMP_Text>();
 
         Debug.Log(TimeText.text);
 
@@ -99,28 +101,30 @@ public class SimulationManager : MonoBehaviour
         DS24.updateData(globalTime);
         DS34.updateData(globalTime);
         priority.updateData(globalTime);
-        // And print it out! (if they are availible)
+        // And print it out! (if they are availible) 
+        /*
         if (WPSA.isAvailible)
         {
-            Debug.Log(WPSA.toString());
+        //    Debug.Log(WPSA.toString());
         }
         if (DS54.isAvailible)
         {
-            Debug.Log(DS54.toString());
+        //    Debug.Log(DS54.toString());
         }
         if (DS34.isAvailible)
         {
-            Debug.Log(DS34.toString());
+        //    Debug.Log(DS34.toString());
         }
         if (DS24.isAvailible)
         {
-            Debug.Log(DS24.toString());
-        }
+        //    Debug.Log(DS24.toString());
+        }*/ // (We don't need this anymore because of the new DSN panel, but uncomment if you need it back)
 
         // Update priority satellite
         priority = prioritize(priority, WPSA, DS54, DS34, DS24);
         // Let's print it out
-        Debug.Log(priority.priorityToString());
+        DSNPriority.text = $"Prioritized: {priority.name}";
+        //Debug.Log(priority.priorityToString());
     }
 
     // Kinda clunky to understand, probably a more "efficient" and easier to understand way to do this
