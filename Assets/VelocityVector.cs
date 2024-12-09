@@ -15,7 +15,8 @@ public class VelocityVector : MonoBehaviour
     public float len; 
     public Vector3 scaler = new Vector3();
 
-    public bool gone = true;
+    public bool gone = true; // to luke: WHY DID YOU MAKE THIS MEAN THE OPPOSITE OF WHAT IT SHOULD MEAN???? IF GONE = TRUE THEN WHY IS IT NOT GONE???? Thanks, Raif
+    // btw i fixed it so
 
     void Start() 
     {
@@ -38,12 +39,12 @@ public class VelocityVector : MonoBehaviour
     }
 
     public void disappear() {
-        if (gone == true) {
+        if (gone == false) {
             gameObject.SetActive(false);
-            gone = false;
+            gone = true;
         } else {
             gameObject.SetActive(true);
-            gone = true;
+            gone = false;
         }
     }
 }

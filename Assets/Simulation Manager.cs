@@ -13,7 +13,8 @@ public class SimulationManager : MonoBehaviour
     public static string [] artemisData;
     public GameObject pointStage1; // Prefab used to trace out stage 1
     public GameObject pointStage2; // Prefab used to trace out stage 2
-    public Slider TimeSlider;
+    public Slider SpeedSlider; 
+    public Slider TimelineSlider;
     public TMP_Text TimeText;
     public TMP_Text DSNPriority;
 
@@ -35,7 +36,7 @@ public class SimulationManager : MonoBehaviour
     
     void UpdateSpeed()
     {
-        speedMultiplier = (int) TimeSlider.value;
+        speedMultiplier = (int) SpeedSlider.value;
         TimeText.text = "Speed: "+speedMultiplier.ToString()+"x";
     }
 
@@ -67,7 +68,8 @@ public class SimulationManager : MonoBehaviour
         priority = WPSA;
 
         // Stuff related to UI
-        TimeSlider = GameObject.Find("TimeMultSlider").GetComponent<Slider>();
+        SpeedSlider = GameObject.Find("TimeMultSlider").GetComponent<Slider>();
+        TimelineSlider = GameObject.Find("TimelineSlider").GetComponent<Slider>();
         TimeText = GameObject.Find("SpeedText").GetComponent<TMP_Text>();
         DSNPriority = GameObject.Find("Priority").GetComponent<TMP_Text>();
 
@@ -76,8 +78,23 @@ public class SimulationManager : MonoBehaviour
         minutesPerFrame = 1;
         speedMultiplier = 0;
 
-        TimeSlider.onValueChanged.AddListener(delegate {
-            UpdateSpeed();
+        SpeedSlider.onValueChanged.AddListener(delegate {
+            if ((int) SpeedSlider.value != speedMultiplier) 
+            {    
+                UpdateSpeed();
+            }
+        });
+
+        TimelineSlider.onValueChanged.AddListener(delegate { 
+            // Make sure time DOES NOT INTERFERE HERE!!!
+            if ((int) TimelineSlider.value != globalTime) 
+            {    
+                speedMultiplier = 0;
+                SpeedSlider.value = 0;
+                TimeText.text = "Speed: "+speedMultiplier.ToString()+"x";
+            }
+
+            globalTime = (int) TimelineSlider.value;
         });
     }
 
@@ -88,10 +105,14 @@ public class SimulationManager : MonoBehaviour
         // Currently it just increases globalTime each frame, but we will implement UI controls later 
         // which will enable further manipulation of time (pause/play, slider, playback speed,etc.)
         globalTime += 1*speedMultiplier;
+        TimelineSlider.value = globalTime;
         // IndexOutOfRange exception was getting annoying, thus:
         if (globalTime > 12982)
         {
             globalTime = 12982;
+            SpeedSlider.value = 0;
+            speedMultiplier = 0;
+            TimeText.text = "Speed: "+speedMultiplier.ToString()+"x";
         }
         Debug.Log("globalTime: " + globalTime);
 
@@ -124,6 +145,7 @@ public class SimulationManager : MonoBehaviour
         priority = prioritize(priority, WPSA, DS54, DS34, DS24);
         // Let's print it out
         DSNPriority.text = $"Prioritized: {priority.name}";
+        GameObject.Find(priority.name).GetComponent<TMP_Text>().transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.blue; // make prioritized satellite blue
         //Debug.Log(priority.priorityToString());
     }
 
