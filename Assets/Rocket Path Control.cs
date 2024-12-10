@@ -5,10 +5,10 @@ using Unity.Collections;
 public class RocketPathControl : MonoBehaviour
 {
     // Game Objects to reference
-    public GameObject pathPoint; // Prefab sphere we will use to "draw" the path
+    //public GameObject pathPoint; // Prefab sphere we will use to "draw" the path
     public GameObject referencePath; // In this case the rocket itself because that is the position data we want the path to follow
-    //public GameObject simManObject; // The Simulation Manager
-    //SimulationManager simManager; // We need to create an object in this script so that we can call Simulation Manager's methods
+    public GameObject stage1Points;
+    public GameObject stage2Points;
     
     // Variables
     public float posX;
@@ -28,6 +28,11 @@ public class RocketPathControl : MonoBehaviour
     public double distance;
     public int frameCounter = 0;
     public int skipPoints;
+    
+    // Used to figure out how to scale appropriately for the camera
+    public static int currentCamera = 1;
+    public Vector3 camera1Scale = new Vector3(100,100,100);
+    public Vector3 camera2Scale = new Vector3(1,1,1);
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,6 +43,9 @@ public class RocketPathControl : MonoBehaviour
         prevPosY = (float)SimulationManager.getData(SimulationManager.globalTime,2);
         prevPosZ = (float)SimulationManager.getData(SimulationManager.globalTime,3);
         prevPos = new Vector3(posX, posY, posZ);
+
+        // Scale to the first camera
+        transform.localScale = camera1Scale;
     }
 
     // Update is called once per frame
@@ -63,6 +71,22 @@ public class RocketPathControl : MonoBehaviour
         
         // METHOD 2.0 (but not as cool, so we won't use it)
         //transform.rotation = Quaternion.LookRotation(scaledPos - prevPos/100);
+
+        // Finally, we need to check if we need to tranform scale (if camera has been switched)
+        if (currentCamera != SwitchCamera.cameraNumber)
+        {
+            currentCamera = SwitchCamera.cameraNumber;
+            if (currentCamera == 1)
+            {
+                transform.localScale = camera1Scale;
+                //ScalePoints.scaleMyself(camera1Scale);
+            }
+            else if (currentCamera == 2)
+            {
+                transform.localScale = camera2Scale;
+                //ScalePoints.scaleMyself(camera2Scale);
+            }
+        }
         
         // Output total distance traveled (eventually will be added to UI)
         distance += Distance(posX,posY,posZ,prevPosX,prevPosY,prevPosZ);
@@ -75,7 +99,8 @@ public class RocketPathControl : MonoBehaviour
         prevPos = new Vector3(posX, posY, posZ);
         if (frameCounter == skipPoints)
         {
-            GameObject pointClone = Instantiate(pathPoint, scaledPos, referencePath.transform.rotation);
+            // I don't think we need the points of the path to display anymore
+            //GameObject pointClone = Instantiate(pathPoint, scaledPos, referencePath.transform.rotation);
             frameCounter = 0;
         }
         frameCounter++;

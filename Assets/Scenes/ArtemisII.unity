@@ -2282,8 +2282,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9417e2dbca84fb647a1154e43a6f0c5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathPoint: {fileID: 1812268610291249955, guid: c4f932083d96e2840854d52a042c2ab9, type: 3}
   referencePath: {fileID: 857286253}
+  stage1Points: {fileID: 1812268610291249955, guid: 8461f25443f924145bb1fbaa6d9afba9, type: 3}
+  stage2Points: {fileID: 1812268610291249955, guid: 6218a055e8d58064fa952196bceec70e, type: 3}
   posX: 0
   posY: 0
   posZ: 0
@@ -2299,6 +2300,9 @@ MonoBehaviour:
   distance: 0
   frameCounter: 0
   skipPoints: 1
+  camera1Scale: {x: 100, y: 100, z: 100}
+  camera2Scale: {x: 1, y: 1, z: 1}
+  scaleDifference: {x: 0.3, y: 0.3, z: 0.3}
 --- !u!65 &857286255
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2383,7 +2387,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 50, y: 50, z: 50}
-  m_LocalScale: {x: 30, y: 30, z: 90}
+  m_LocalScale: {x: 100, y: 100, z: 300}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1326575912}
@@ -3738,8 +3742,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   artemisDatasheet: {fileID: 4900000, guid: 3cd8bd19cd28a5d4f88bbf26b94fbfc1, type: 3}
-  pointStage1: {fileID: 1812268610291249955, guid: 8461f25443f924145bb1fbaa6d9afba9, type: 3}
-  pointStage2: {fileID: 1812268610291249955, guid: 6218a055e8d58064fa952196bceec70e, type: 3}
+  pointStage1: {fileID: 2389384921682129381, guid: 06ea8660d85af99489b2598130184bc0, type: 3}
+  pointStage2: {fileID: 811993802663782569, guid: 86a6aaac23949684ea500b0fadfb13a9, type: 3}
   SpeedSlider: {fileID: 0}
   TimelineSlider: {fileID: 0}
   TimeText: {fileID: 0}

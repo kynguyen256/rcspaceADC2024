@@ -7,10 +7,12 @@ public class SwitchCamera : MonoBehaviour
    public GameObject Camera1;
    public GameObject Camera2;
    public int manager;
+   // Used to scale everything according to which camera is selected
+   public static int cameraNumber;
 
     void Start()
     {
-        manager = 0;
+        manager = 1;
         ManageCamera();
     }
 
@@ -24,11 +26,13 @@ public class SwitchCamera : MonoBehaviour
         {
             Cam2();
             manager = 1;
+            cameraNumber = 2;
         }
         else
         {
             Cam1();
             manager = 0;
+            cameraNumber = 1;
         }
     }
    void Cam1()
