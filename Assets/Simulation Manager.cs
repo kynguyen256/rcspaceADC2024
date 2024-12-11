@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class SimulationManager : MonoBehaviour
 {
@@ -13,10 +14,17 @@ public class SimulationManager : MonoBehaviour
     public static string [] artemisData;
     public GameObject pointStage1; // Prefab used to trace out stage 1
     public GameObject pointStage2; // Prefab used to trace out stage 2
+    public GameObject pointStage3; // Prefab used to trace out stage 3
+    public GameObject pointStage4; // Prefab used to trace out stage 4
+    public GameObject pointRocketTrace; // Prefab used to trace out rocket progression
     public Slider SpeedSlider; 
     public Slider TimelineSlider;
     public TMP_Text TimeText;
     public TMP_Text DSNPriority;
+    public TMP_Text DSNLinkObj;
+    public bool PriorityColorization = true;
+    public bool statusColor = true;
+    private List<GameObject> RocketPathList;
 
     //Variables
     public static int globalTime = 8;
@@ -33,11 +41,31 @@ public class SimulationManager : MonoBehaviour
     CommunicationLink DS34 = new CommunicationLink("DS34",14,15,34);
     // Initilaize satalite object that will reference the priotized satatlite (begin with WPSA)
     CommunicationLink priority;
+    // Array of all satellites to be prioritized (created at start of program)
+    CommunicationLink[] priorityList;
     
     void UpdateSpeed()
     {
         speedMultiplier = (int) SpeedSlider.value;
         TimeText.text = "Speed: "+speedMultiplier.ToString()+"x";
+    }
+
+    public void toggleColorization() {
+        if (PriorityColorization == true) {
+            PriorityColorization = false;
+        }
+        else {
+            PriorityColorization = true;
+        }
+    }
+
+    public void toggleStatColorization() {
+        if (statusColor == true) {
+            statusColor = false;
+        }
+        else {
+            statusColor = true;
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -50,52 +78,75 @@ public class SimulationManager : MonoBehaviour
         artemisData = artemisDatasheet.text.Split(new string[] { ",", "\n"}, System.StringSplitOptions.None);
 
         // Traces out the path. Just believe it does. Lots to explain otherwise. Yes, it takes some time at the launch of the program.
-        for (int i = 8; i <= 196-((196-8)%skipPoints); i+=(int)(skipPoints/velocityMagnitude+1))
+        for (int i = 8; i <= 1471-((1471-8)%skipPoints); i+=(int)(skipPoints/velocityMagnitude+1))
         {
             GameObject pointClone = Instantiate(pointStage1, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
             velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
             Debug.Log(velocityMagnitude);
         }
-        for (int i = 196-((196-8)%skipPoints); i <= 12983; i+=(int)(skipPoints/velocityMagnitude+1))
+        for (int i = 1471-((1471-8)%skipPoints); i <= 7096-((7096-8)%skipPoints); i+=(int)(skipPoints/velocityMagnitude+1))
         {
             GameObject pointClone = Instantiate(pointStage2, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
             velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
             Debug.Log(velocityMagnitude);
         }
+        for (int i = 7096-((7096-8)%skipPoints); i <= 12977-((12977-8)%skipPoints); i+=(int)(skipPoints/velocityMagnitude+1))
+        {
+            GameObject pointClone = Instantiate(pointStage3, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
+            velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
+            Debug.Log(velocityMagnitude);
+        }
+        for (int i = 12977-((12977-8)%skipPoints); i <= 12983; i+=(int)(skipPoints/velocityMagnitude+1))
+        {
+            GameObject pointClone = Instantiate(pointStage4, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
+            velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
+            Debug.Log(velocityMagnitude);
+        }
+
+        RocketPathList = new List<GameObject>();
+
         Debug.Log("Done creating path!");
 
         // Stuff related to satellites
         priority = WPSA;
+        // Create the list (array) of priotized satellites
+        CommunicationLink[] priorityList = prioritizeSatellites(priority, WPSA, DS54, DS34, DS24);
 
-        // Stuff related to UI
+        // Stuff related to UI 
+
+        /*
         SpeedSlider = GameObject.Find("TimeMultSlider").GetComponent<Slider>();
         TimelineSlider = GameObject.Find("TimelineSlider").GetComponent<Slider>();
         TimeText = GameObject.Find("SpeedText").GetComponent<TMP_Text>();
         DSNPriority = GameObject.Find("Priority").GetComponent<TMP_Text>();
+        */
+
 
         Debug.Log(TimeText.text);
 
         minutesPerFrame = 1;
         speedMultiplier = 0;
 
-        SpeedSlider.onValueChanged.AddListener(delegate {
-            if ((int) SpeedSlider.value != speedMultiplier) 
-            {    
-                UpdateSpeed();
-            }
-        });
+    }
 
-        TimelineSlider.onValueChanged.AddListener(delegate { 
-            // Make sure time DOES NOT INTERFERE HERE!!!
-            if ((int) TimelineSlider.value != globalTime) 
-            {    
-                speedMultiplier = 0;
-                SpeedSlider.value = 0;
-                TimeText.text = "Speed: "+speedMultiplier.ToString()+"x";
-            }
+    public void CheckSpeedSlider() {
+        Debug.Log("DO WHAT YOU WANT CUZ A PIRATE IS FREE");
+        if ((int) SpeedSlider.value != speedMultiplier) 
+        {    
+            UpdateSpeed();
+        }
+    }
 
+    public void CheckTimeSlider() {
+        // Make sure time DOES NOT INTERFERE HERE!!!
+        if ((int) TimelineSlider.value != globalTime) 
+        {    
+            Debug.Log("YAR HAR FIDDLE DEE DEE");
+            speedMultiplier = 0;
+            SpeedSlider.value = 0;
+            TimeText.text = "Speed: "+speedMultiplier.ToString()+"x";
             globalTime = (int) TimelineSlider.value;
-        });
+        }
     }
 
     // Update is called once per frame
@@ -106,6 +157,20 @@ public class SimulationManager : MonoBehaviour
         // which will enable further manipulation of time (pause/play, slider, playback speed,etc.)
         globalTime += 1*speedMultiplier;
         TimelineSlider.value = globalTime;
+
+        /*foreach (GameObject value in RocketPathList) {
+            Destroy(value);
+        }
+
+        for (int i = 8; i <= globalTime; i+=(int)(skipPoints+1))
+        {
+            GameObject pointClone = Instantiate(pointRocketTrace, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
+            RocketPathList.Add(pointClone);
+        }*/
+
+        Debug.Log("TimelineSlider.value = "+TimelineSlider.value.ToString());
+        Debug.Log("SpeedSlider.value = "+SpeedSlider.value.ToString());
+        Debug.Log("speedMultiplier.value = "+speedMultiplier);
         // IndexOutOfRange exception was getting annoying, thus:
         if (globalTime > 12982)
         {
@@ -122,32 +187,149 @@ public class SimulationManager : MonoBehaviour
         DS24.updateData(globalTime);
         DS34.updateData(globalTime);
         priority.updateData(globalTime);
-        // And print it out! (if they are availible) 
-        /*
-        if (WPSA.isAvailible)
-        {
-        //    Debug.Log(WPSA.toString());
+
+        if (statusColor == true) { // COLORS!!!!
+            DSNLinkObj = GameObject.Find("WPSA").GetComponent<TMP_Text>();
+            
+            if(DSNLinkObj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text != "0kb/s")
+            {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.green;
+            } else {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.red;
+            }
+
+            DSNLinkObj = GameObject.Find("DS54").GetComponent<TMP_Text>();
+            
+            if(DSNLinkObj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text != "0kb/s")
+            {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.green;
+            } else {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.red;
+            }
+
+            DSNLinkObj = GameObject.Find("DS24").GetComponent<TMP_Text>();
+            
+            if(DSNLinkObj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text != "0kb/s")
+            {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.green;
+            } else {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.red;
+            }
+
+            DSNLinkObj = GameObject.Find("DS34").GetComponent<TMP_Text>();
+            
+            if(DSNLinkObj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text != "0kb/s")
+            {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.green;
+            } else {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.red;
+            }
+            
+        } else {
+            DSNLinkObj = GameObject.Find("WPSA").GetComponent<TMP_Text>();
+            DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.white;
+
+            DSNLinkObj = GameObject.Find("DS54").GetComponent<TMP_Text>();
+            DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.white;
+
+            DSNLinkObj = GameObject.Find("DS24").GetComponent<TMP_Text>();
+            DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.white;
+
+            DSNLinkObj = GameObject.Find("DS34").GetComponent<TMP_Text>();
+            DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.white;
         }
-        if (DS54.isAvailible)
-        {
-        //    Debug.Log(DS54.toString());
-        }
-        if (DS34.isAvailible)
-        {
-        //    Debug.Log(DS34.toString());
-        }
-        if (DS24.isAvailible)
-        {
-        //    Debug.Log(DS24.toString());
-        }*/ // (We don't need this anymore because of the new DSN panel, but uncomment if you need it back)
 
         // Update priority satellite
+
+
+        // OLD METHOD
         priority = prioritize(priority, WPSA, DS54, DS34, DS24);
+
+
+        // NEW METHOD
+        //priority = priorityList[globalTime];
+
+
         // Let's print it out
         DSNPriority.text = $"Prioritized: {priority.name}";
-        GameObject.Find(priority.name).GetComponent<TMP_Text>().transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.blue; // make prioritized satellite blue
+        if (PriorityColorization == true) {
+            GameObject.Find(priority.name).GetComponent<TMP_Text>().transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.blue; // make prioritized satellite blue
+        }
+        
         //Debug.Log(priority.priorityToString());
     }
+
+    // New priotizing (least transfers)
+    public static CommunicationLink[] prioritizeSatellites(CommunicationLink prioritized, CommunicationLink satellite1, CommunicationLink satellite2, CommunicationLink satellite3, CommunicationLink satellite4)
+    {
+        CommunicationLink[] returnPriorityList = new CommunicationLink[12978];
+        for (int i = 0; i <= 12978; i++)
+        {
+            // Update all of the satellites to the "current time" (within the loop that is)
+            prioritized.checkAvailibility(i);
+            satellite1.checkAvailibility(i);
+            satellite2.checkAvailibility(i);
+            satellite3.checkAvailibility(i);
+            satellite4.checkAvailibility(i);
+            // If we lose priotized satellite, we need to switch satellites
+            if (!prioritized.isAvailible)
+            {
+                // Need to find how long each satellite will last (see public static void method calculateAvailbilityTime below)
+                if (satellite1.isAvailible)
+                {
+                    calculateAvailbilityTime(satellite1, i);
+                }
+                if (satellite2.isAvailible)
+                {
+                    calculateAvailbilityTime(satellite2, i);
+                }
+                if (satellite3.isAvailible)
+                {
+                    calculateAvailbilityTime(satellite3, i);
+                }
+                if (satellite4.isAvailible)
+                {
+                    calculateAvailbilityTime(satellite4, i);
+                }
+                // With this information we can see which one will last the longest, and set prioritized to that one
+                prioritized = findGreatestAvailibilityTime(satellite1, satellite2, satellite3, satellite4);
+            }
+            returnPriorityList[i] = prioritized;
+        }
+        return returnPriorityList;
+    }
+
+    public static void calculateAvailbilityTime(CommunicationLink satellite, int initialTime)
+    {
+        // Basically updating availibility time to see how long it will last.
+        satellite.availibleTime = 0;
+        while (satellite.isAvailible)
+        {
+            satellite.checkAvailibility(initialTime + satellite.availibleTime);
+            satellite.availibleTime++;
+        }
+    }
+
+    public static CommunicationLink findGreatestAvailibilityTime(CommunicationLink s1, CommunicationLink s2, CommunicationLink s3, CommunicationLink s4)
+    {
+        if (s1.availibleTime > s2.availibleTime && s2.availibleTime > s3.availibleTime && s3.availibleTime > s4.availibleTime)
+        {
+            return s1;
+        }
+        else if (s2.availibleTime > s3.availibleTime && s3.availibleTime > s4.availibleTime)
+        {
+            return s2;
+        }
+        else if (s3.availibleTime > s4.availibleTime)
+        {
+            return s3;
+        }
+        else
+        {
+            return s4;
+        }
+    }
+
 
     // Kinda clunky to understand, probably a more "efficient" and easier to understand way to do this
     public static CommunicationLink prioritize(CommunicationLink priorized, CommunicationLink satellite1, CommunicationLink satellite2, CommunicationLink satellite3, CommunicationLink satellite4)

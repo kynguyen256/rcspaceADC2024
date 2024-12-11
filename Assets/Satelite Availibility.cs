@@ -14,10 +14,12 @@ public class CommunicationLink
     public bool isAvailible;
     private bool wasAvailible;
     public bool changedAvailibility;
+    public int availibleTime;
     private int distanceColumn;
     private double distance; 
     private int antennaDiameter;
     public double linkBudget;
+    public bool statusColor = true;
     public TMP_Text DSNLinkObj;
 
     // Making a constructor (feels like AP CSA)
@@ -27,6 +29,7 @@ public class CommunicationLink
         this.availibilityColumn = availibilityColumn;
         isAvailible = false;
         wasAvailible = false;
+        changedAvailibility = true;
         this.distanceColumn = distanceColumn;
         distance = double.MaxValue;
         this.antennaDiameter = antennaDiameter;
@@ -34,8 +37,8 @@ public class CommunicationLink
 
     public void updateData(int time)
     {
-        // Check to see if satellite is availible by checing the availibity collumn of Artemis data
-        isAvailible = (SimulationManager.getData(time, availibilityColumn)==1);
+        // See method below (this method needs to be referenced seperately by Simulation Manager at times, thus is its own method)
+        checkAvailibility(time);
         // If satellite is availible, update distance
         if (isAvailible)
         {
@@ -47,20 +50,28 @@ public class CommunicationLink
         }
         // Update linkBudget
         linkBudget = calculateLinkBudget();
+        
         DSNLinkObj = GameObject.Find(name).GetComponent<TMP_Text>();
         DSNLinkObj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = $"{Math.Round(linkBudget, 2)}kb/s";
-        
+        /*
         if(linkBudget > 0)
         {
             DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.green;
         } else {
             DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.red;
-        }
+        }*/
+        
 
         // Check to see if there has been a change in availibility
         changedAvailibility = (isAvailible != wasAvailible);
         // Set wasAvailible to current availibility (to compare next frame if a change)
         wasAvailible = isAvailible;
+    }
+
+    public void checkAvailibility(int time)
+    {
+        // Check to see if satellite is availible by checing the availibity collumn of Artemis data
+        isAvailible = (SimulationManager.getData(time, availibilityColumn)==1);
     }
 
     // Yup, that's right, I made a whole method devoted to the link budget equation 
