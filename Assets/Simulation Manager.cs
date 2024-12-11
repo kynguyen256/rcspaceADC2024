@@ -5,6 +5,7 @@ using System;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class SimulationManager : MonoBehaviour
 {
@@ -13,10 +14,17 @@ public class SimulationManager : MonoBehaviour
     public static string [] artemisData;
     public GameObject pointStage1; // Prefab used to trace out stage 1
     public GameObject pointStage2; // Prefab used to trace out stage 2
+    public GameObject pointStage3; // Prefab used to trace out stage 3
+    public GameObject pointStage4; // Prefab used to trace out stage 4
+    public GameObject pointRocketTrace; // Prefab used to trace out rocket progression
     public Slider SpeedSlider; 
     public Slider TimelineSlider;
     public TMP_Text TimeText;
     public TMP_Text DSNPriority;
+    public TMP_Text DSNLinkObj;
+    public bool PriorityColorization = true;
+    public bool statusColor = true;
+    private List<GameObject> RocketPathList;
 
     //Variables
     public static int globalTime = 8;
@@ -42,6 +50,24 @@ public class SimulationManager : MonoBehaviour
         TimeText.text = "Speed: "+speedMultiplier.ToString()+"x";
     }
 
+    public void toggleColorization() {
+        if (PriorityColorization == true) {
+            PriorityColorization = false;
+        }
+        else {
+            PriorityColorization = true;
+        }
+    }
+
+    public void toggleStatColorization() {
+        if (statusColor == true) {
+            statusColor = false;
+        }
+        else {
+            statusColor = true;
+        }
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -52,18 +78,33 @@ public class SimulationManager : MonoBehaviour
         artemisData = artemisDatasheet.text.Split(new string[] { ",", "\n"}, System.StringSplitOptions.None);
 
         // Traces out the path. Just believe it does. Lots to explain otherwise. Yes, it takes some time at the launch of the program.
-        for (int i = 8; i <= 196-((196-8)%skipPoints); i+=(int)(skipPoints/velocityMagnitude+1))
+        for (int i = 8; i <= 1471-((1471-8)%skipPoints); i+=(int)(skipPoints/velocityMagnitude+1))
         {
             GameObject pointClone = Instantiate(pointStage1, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
             velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
             Debug.Log(velocityMagnitude);
         }
-        for (int i = 196-((196-8)%skipPoints); i <= 12983; i+=(int)(skipPoints/velocityMagnitude+1))
+        for (int i = 1471-((1471-8)%skipPoints); i <= 7096-((7096-8)%skipPoints); i+=(int)(skipPoints/velocityMagnitude+1))
         {
             GameObject pointClone = Instantiate(pointStage2, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
             velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
             Debug.Log(velocityMagnitude);
         }
+        for (int i = 7096-((7096-8)%skipPoints); i <= 12977-((12977-8)%skipPoints); i+=(int)(skipPoints/velocityMagnitude+1))
+        {
+            GameObject pointClone = Instantiate(pointStage3, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
+            velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
+            Debug.Log(velocityMagnitude);
+        }
+        for (int i = 12977-((12977-8)%skipPoints); i <= 12983; i+=(int)(skipPoints/velocityMagnitude+1))
+        {
+            GameObject pointClone = Instantiate(pointStage4, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
+            velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
+            Debug.Log(velocityMagnitude);
+        }
+
+        RocketPathList = new List<GameObject>();
+
         Debug.Log("Done creating path!");
 
         // Stuff related to satellites
@@ -116,6 +157,17 @@ public class SimulationManager : MonoBehaviour
         // which will enable further manipulation of time (pause/play, slider, playback speed,etc.)
         globalTime += 1*speedMultiplier;
         TimelineSlider.value = globalTime;
+
+        /*foreach (GameObject value in RocketPathList) {
+            Destroy(value);
+        }
+
+        for (int i = 8; i <= globalTime; i+=(int)(skipPoints+1))
+        {
+            GameObject pointClone = Instantiate(pointRocketTrace, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
+            RocketPathList.Add(pointClone);
+        }*/
+
         Debug.Log("TimelineSlider.value = "+TimelineSlider.value.ToString());
         Debug.Log("SpeedSlider.value = "+SpeedSlider.value.ToString());
         Debug.Log("speedMultiplier.value = "+speedMultiplier);
@@ -136,6 +188,57 @@ public class SimulationManager : MonoBehaviour
         DS34.updateData(globalTime);
         priority.updateData(globalTime);
 
+        if (statusColor == true) { // COLORS!!!!
+            DSNLinkObj = GameObject.Find("WPSA").GetComponent<TMP_Text>();
+            
+            if(DSNLinkObj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text != "0kb/s")
+            {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.green;
+            } else {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.red;
+            }
+
+            DSNLinkObj = GameObject.Find("DS54").GetComponent<TMP_Text>();
+            
+            if(DSNLinkObj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text != "0kb/s")
+            {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.green;
+            } else {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.red;
+            }
+
+            DSNLinkObj = GameObject.Find("DS24").GetComponent<TMP_Text>();
+            
+            if(DSNLinkObj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text != "0kb/s")
+            {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.green;
+            } else {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.red;
+            }
+
+            DSNLinkObj = GameObject.Find("DS34").GetComponent<TMP_Text>();
+            
+            if(DSNLinkObj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text != "0kb/s")
+            {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.green;
+            } else {
+                DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.red;
+            }
+            
+        } else {
+            DSNLinkObj = GameObject.Find("WPSA").GetComponent<TMP_Text>();
+            DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.white;
+
+            DSNLinkObj = GameObject.Find("DS54").GetComponent<TMP_Text>();
+            DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.white;
+
+            DSNLinkObj = GameObject.Find("DS24").GetComponent<TMP_Text>();
+            DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.white;
+
+            DSNLinkObj = GameObject.Find("DS34").GetComponent<TMP_Text>();
+            DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.white;
+        }
+
         // Update priority satellite
 
 
@@ -149,7 +252,10 @@ public class SimulationManager : MonoBehaviour
 
         // Let's print it out
         DSNPriority.text = $"Prioritized: {priority.name}";
-        GameObject.Find(priority.name).GetComponent<TMP_Text>().transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.blue; // make prioritized satellite blue
+        if (PriorityColorization == true) {
+            GameObject.Find(priority.name).GetComponent<TMP_Text>().transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.blue; // make prioritized satellite blue
+        }
+        
         //Debug.Log(priority.priorityToString());
     }
 

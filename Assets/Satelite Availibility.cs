@@ -19,6 +19,7 @@ public class CommunicationLink
     private double distance; 
     private int antennaDiameter;
     public double linkBudget;
+    public bool statusColor = true;
     public TMP_Text DSNLinkObj;
 
     // Making a constructor (feels like AP CSA)
@@ -49,15 +50,17 @@ public class CommunicationLink
         }
         // Update linkBudget
         linkBudget = calculateLinkBudget();
+        
         DSNLinkObj = GameObject.Find(name).GetComponent<TMP_Text>();
         DSNLinkObj.transform.GetChild(0).gameObject.GetComponent<TMP_Text>().text = $"{Math.Round(linkBudget, 2)}kb/s";
-        
+        /*
         if(linkBudget > 0)
         {
             DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.green;
         } else {
             DSNLinkObj.transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.red;
-        }
+        }*/
+        
 
         // Check to see if there has been a change in availibility
         changedAvailibility = (isAvailible != wasAvailible);

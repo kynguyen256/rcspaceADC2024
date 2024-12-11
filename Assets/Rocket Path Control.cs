@@ -9,6 +9,9 @@ public class RocketPathControl : MonoBehaviour
     public GameObject referencePath; // In this case the rocket itself because that is the position data we want the path to follow
     //public GameObject simManObject; // The Simulation Manager
     //SimulationManager simManager; // We need to create an object in this script so that we can call Simulation Manager's methods
+
+    private GameObject stage1Points;
+    private GameObject stage2Points;
     
     // Variables
     public float posX;
@@ -28,6 +31,10 @@ public class RocketPathControl : MonoBehaviour
     public double distance;
     public int frameCounter = 0;
     public int skipPoints;
+
+    public static int currentCamera = 1;
+    public Vector3 camera1Scale = new Vector3(100,100,300);
+    public Vector3 camera2Scale = new Vector3(10,10,30);
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -63,6 +70,16 @@ public class RocketPathControl : MonoBehaviour
         
         // METHOD 2.0 (but not as cool, so we won't use it)
         //transform.rotation = Quaternion.LookRotation(scaledPos - prevPos/100);
+
+        if (currentCamera != SwitchCamera.cameraNumber)
+        {
+            currentCamera = SwitchCamera.cameraNumber;
+            if (currentCamera == 1) {
+                transform.localScale = new Vector3(100,100,300);
+            } else {
+                transform.localScale = new Vector3(10,10,30);
+            }
+        }
         
         // Output total distance traveled (eventually will be added to UI)
         distance += Distance(posX,posY,posZ,prevPosX,prevPosY,prevPosZ);
@@ -75,7 +92,7 @@ public class RocketPathControl : MonoBehaviour
         prevPos = new Vector3(posX, posY, posZ);
         if (frameCounter == skipPoints)
         {
-            GameObject pointClone = Instantiate(pathPoint, scaledPos, referencePath.transform.rotation);
+            //GameObject pointClone = Instantiate(pathPoint, scaledPos, referencePath.transform.rotation);
             frameCounter = 0;
         }
         frameCounter++;
