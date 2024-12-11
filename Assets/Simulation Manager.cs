@@ -71,35 +71,41 @@ public class SimulationManager : MonoBehaviour
         // Create the list (array) of priotized satellites
         CommunicationLink[] priorityList = prioritizeSatellites(priority, WPSA, DS54, DS34, DS24);
 
-        // Stuff related to UI
+        // Stuff related to UI 
+
+        /*
         SpeedSlider = GameObject.Find("TimeMultSlider").GetComponent<Slider>();
         TimelineSlider = GameObject.Find("TimelineSlider").GetComponent<Slider>();
         TimeText = GameObject.Find("SpeedText").GetComponent<TMP_Text>();
         DSNPriority = GameObject.Find("Priority").GetComponent<TMP_Text>();
+        */
+
 
         Debug.Log(TimeText.text);
 
         minutesPerFrame = 1;
         speedMultiplier = 0;
 
-        SpeedSlider.onValueChanged.AddListener(delegate {
-            if ((int) SpeedSlider.value != speedMultiplier) 
-            {    
-                UpdateSpeed();
-            }
-        });
+    }
 
-        TimelineSlider.onValueChanged.AddListener(delegate { 
-            // Make sure time DOES NOT INTERFERE HERE!!!
-            if ((int) TimelineSlider.value != globalTime) 
-            {    
-                speedMultiplier = 0;
-                SpeedSlider.value = 0;
-                TimeText.text = "Speed: "+speedMultiplier.ToString()+"x";
-            }
+    public void CheckSpeedSlider() {
+        Debug.Log("DO WHAT YOU WANT CUZ A PIRATE IS FREE");
+        if ((int) SpeedSlider.value != speedMultiplier) 
+        {    
+            UpdateSpeed();
+        }
+    }
 
+    public void CheckTimeSlider() {
+        // Make sure time DOES NOT INTERFERE HERE!!!
+        if ((int) TimelineSlider.value != globalTime) 
+        {    
+            Debug.Log("YAR HAR FIDDLE DEE DEE");
+            speedMultiplier = 0;
+            SpeedSlider.value = 0;
+            TimeText.text = "Speed: "+speedMultiplier.ToString()+"x";
             globalTime = (int) TimelineSlider.value;
-        });
+        }
     }
 
     // Update is called once per frame
@@ -110,6 +116,9 @@ public class SimulationManager : MonoBehaviour
         // which will enable further manipulation of time (pause/play, slider, playback speed,etc.)
         globalTime += 1*speedMultiplier;
         TimelineSlider.value = globalTime;
+        Debug.Log("TimelineSlider.value = "+TimelineSlider.value.ToString());
+        Debug.Log("SpeedSlider.value = "+SpeedSlider.value.ToString());
+        Debug.Log("speedMultiplier.value = "+speedMultiplier);
         // IndexOutOfRange exception was getting annoying, thus:
         if (globalTime > 12982)
         {

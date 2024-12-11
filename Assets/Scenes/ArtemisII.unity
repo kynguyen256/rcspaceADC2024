@@ -3543,7 +3543,19 @@ MonoBehaviour:
   m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1525060594}
+        m_TargetAssemblyTypeName: SimulationManager, Assembly-CSharp
+        m_MethodName: CheckSpeedSlider
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1434741964
 GameObject:
   m_ObjectHideFlags: 0
@@ -3740,12 +3752,12 @@ MonoBehaviour:
   artemisDatasheet: {fileID: 4900000, guid: 3cd8bd19cd28a5d4f88bbf26b94fbfc1, type: 3}
   pointStage1: {fileID: 1812268610291249955, guid: 8461f25443f924145bb1fbaa6d9afba9, type: 3}
   pointStage2: {fileID: 1812268610291249955, guid: 6218a055e8d58064fa952196bceec70e, type: 3}
-  SpeedSlider: {fileID: 0}
-  TimelineSlider: {fileID: 0}
-  TimeText: {fileID: 0}
-  DSNPriority: {fileID: 0}
+  SpeedSlider: {fileID: 1389339495}
+  TimelineSlider: {fileID: 1857720704}
+  TimeText: {fileID: 318852640}
+  DSNPriority: {fileID: 1310577505}
   minutesPerFrame: 1
-  speedMultiplier: 1
+  speedMultiplier: 0
   skipPoints: 5
 --- !u!1 &1561005173
 GameObject:
@@ -4447,7 +4459,19 @@ MonoBehaviour:
   m_Value: 8
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1525060594}
+        m_TargetAssemblyTypeName: SimulationManager, Assembly-CSharp
+        m_MethodName: CheckTimeSlider
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1864659143
 GameObject:
   m_ObjectHideFlags: 0
