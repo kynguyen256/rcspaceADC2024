@@ -33,8 +33,6 @@ public class SimulationManager : MonoBehaviour
     CommunicationLink DS34 = new CommunicationLink("DS34",14,15,34);
     // Initilaize satalite object that will reference the priotized satatlite (begin with WPSA)
     CommunicationLink priority;
-    // Array of all satellites to be prioritized (created at start of program)
-    CommunicationLink[] priorityList;
     
     void UpdateSpeed()
     {
@@ -68,8 +66,6 @@ public class SimulationManager : MonoBehaviour
 
         // Stuff related to satellites
         priority = WPSA;
-        // Create the list (array) of priotized satellites
-        CommunicationLink[] priorityList = prioritizeSatellites(priority, WPSA, DS54, DS34, DS24);
 
         // Stuff related to UI
         SpeedSlider = GameObject.Find("TimeMultSlider").GetComponent<Slider>();
@@ -126,95 +122,32 @@ public class SimulationManager : MonoBehaviour
         DS24.updateData(globalTime);
         DS34.updateData(globalTime);
         priority.updateData(globalTime);
+        // And print it out! (if they are availible) 
+        /*
+        if (WPSA.isAvailible)
+        {
+        //    Debug.Log(WPSA.toString());
+        }
+        if (DS54.isAvailible)
+        {
+        //    Debug.Log(DS54.toString());
+        }
+        if (DS34.isAvailible)
+        {
+        //    Debug.Log(DS34.toString());
+        }
+        if (DS24.isAvailible)
+        {
+        //    Debug.Log(DS24.toString());
+        }*/ // (We don't need this anymore because of the new DSN panel, but uncomment if you need it back)
 
         // Update priority satellite
-
-
-        // OLD METHOD
         priority = prioritize(priority, WPSA, DS54, DS34, DS24);
-
-
-        // NEW METHOD
-        //priority = priorityList[globalTime];
-
-
         // Let's print it out
         DSNPriority.text = $"Prioritized: {priority.name}";
         GameObject.Find(priority.name).GetComponent<TMP_Text>().transform.GetChild(1).gameObject.GetComponent<RawImage>().color = Color.blue; // make prioritized satellite blue
         //Debug.Log(priority.priorityToString());
     }
-
-    // New priotizing (least transfers)
-    public static CommunicationLink[] prioritizeSatellites(CommunicationLink prioritized, CommunicationLink satellite1, CommunicationLink satellite2, CommunicationLink satellite3, CommunicationLink satellite4)
-    {
-        CommunicationLink[] returnPriorityList = new CommunicationLink[12978];
-        for (int i = 0; i <= 12978; i++)
-        {
-            // Update all of the satellites to the "current time" (within the loop that is)
-            prioritized.checkAvailibility(i);
-            satellite1.checkAvailibility(i);
-            satellite2.checkAvailibility(i);
-            satellite3.checkAvailibility(i);
-            satellite4.checkAvailibility(i);
-            // If we lose priotized satellite, we need to switch satellites
-            if (!prioritized.isAvailible)
-            {
-                // Need to find how long each satellite will last (see public static void method calculateAvailbilityTime below)
-                if (satellite1.isAvailible)
-                {
-                    calculateAvailbilityTime(satellite1, i);
-                }
-                if (satellite2.isAvailible)
-                {
-                    calculateAvailbilityTime(satellite2, i);
-                }
-                if (satellite3.isAvailible)
-                {
-                    calculateAvailbilityTime(satellite3, i);
-                }
-                if (satellite4.isAvailible)
-                {
-                    calculateAvailbilityTime(satellite4, i);
-                }
-                // With this information we can see which one will last the longest, and set prioritized to that one
-                prioritized = findGreatestAvailibilityTime(satellite1, satellite2, satellite3, satellite4);
-            }
-            returnPriorityList[i] = prioritized;
-        }
-        return returnPriorityList;
-    }
-
-    public static void calculateAvailbilityTime(CommunicationLink satellite, int initialTime)
-    {
-        // Basically updating availibility time to see how long it will last.
-        satellite.availibleTime = 0;
-        while (satellite.isAvailible)
-        {
-            satellite.checkAvailibility(initialTime + satellite.availibleTime);
-            satellite.availibleTime++;
-        }
-    }
-
-    public static CommunicationLink findGreatestAvailibilityTime(CommunicationLink s1, CommunicationLink s2, CommunicationLink s3, CommunicationLink s4)
-    {
-        if (s1.availibleTime > s2.availibleTime && s2.availibleTime > s3.availibleTime && s3.availibleTime > s4.availibleTime)
-        {
-            return s1;
-        }
-        else if (s2.availibleTime > s3.availibleTime && s3.availibleTime > s4.availibleTime)
-        {
-            return s2;
-        }
-        else if (s3.availibleTime > s4.availibleTime)
-        {
-            return s3;
-        }
-        else
-        {
-            return s4;
-        }
-    }
-
 
     // Kinda clunky to understand, probably a more "efficient" and easier to understand way to do this
     public static CommunicationLink prioritize(CommunicationLink priorized, CommunicationLink satellite1, CommunicationLink satellite2, CommunicationLink satellite3, CommunicationLink satellite4)
