@@ -9,8 +9,7 @@ using System.Collections.Generic;
 public class CommunicationLink
 {
     // Instance variables (Sorry Ms. Kikuchi, I'm making some of them public. No mutators/accessor methods)
-    public string name; // Why do we need private names???? 
-    // I'm sorry Raif, that was becaus I'm used to coding for the College Board
+    public string name; // Why do we need private names????
     private int availibilityColumn;
     public bool isAvailible;
     private bool wasAvailible;
@@ -19,7 +18,6 @@ public class CommunicationLink
     private double distance; 
     private int antennaDiameter;
     public double linkBudget;
-    
     public TMP_Text DSNLinkObj;
 
     // Making a constructor (feels like AP CSA)
@@ -87,7 +85,7 @@ public class CommunicationLink
         return $"{name} has a link budget of: {linkBudget}kb/s.";
     }
 
-    // This is to distinguish it.
+    // To distinguish it
     public string priorityToString()
     {
         return $"Thus priority satetlite is {name} and has a link budget of: {linkBudget}kb/s.";
