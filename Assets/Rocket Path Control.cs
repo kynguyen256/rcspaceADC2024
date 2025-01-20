@@ -41,10 +41,11 @@ public class RocketPathControl : MonoBehaviour
     {
         //simManager = simManObject.GetComponent<SimulationManager>();
         // init previous position to first position vars
-        prevPosX = (float)SimulationManager.getData(SimulationManager.globalTime,1);
-        prevPosY = (float)SimulationManager.getData(SimulationManager.globalTime,2);
-        prevPosZ = (float)SimulationManager.getData(SimulationManager.globalTime,3);
-        prevPos = new Vector3(posX, posY, posZ);
+        // Obsolute with new version of calculating direction
+        //prevPosX = (float)SimulationManager.getData(SimulationManager.globalTime,1);
+        //prevPosY = (float)SimulationManager.getData(SimulationManager.globalTime,2);
+        //prevPosZ = (float)SimulationManager.getData(SimulationManager.globalTime,3);
+        //prevPos = new Vector3(posX, posY, posZ);
     }
 
     // Update is called once per frame

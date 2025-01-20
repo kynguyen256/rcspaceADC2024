@@ -21,14 +21,14 @@ public class DistanceDisplay : MonoBehaviour
     void Start()
     {
         shotData = shotDatasheet.text.Split(new string[] { ",", "\n"}, System.StringSplitOptions.None);
-        Debug.Log(shotData);
+        //Debug.Log(shotData);
     }
 
     // Update is called once per frame
     void Update()
     {
         distVal = (float)getShotData(SimulationManager.globalTime,1); 
-        Debug.Log("Distance: " +distVal);
+        //Debug.Log("Distance: " +distVal);
         Dist.SetText("Distance: " + distVal); 
     }
 
