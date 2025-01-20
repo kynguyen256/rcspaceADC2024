@@ -42,7 +42,7 @@ public class SimulationManager : MonoBehaviour
     // Initilaize satalite object that will reference the priotized satatlite (begin with WPSA)
     CommunicationLink priority;
     // Array of all satellites to be prioritized (created at start of program)
-    CommunicationLink[] priorityList;
+    CommunicationLink[] priorityList = new CommunicationLink[12983-8-1];
     
     void UpdateSpeed()
     {
@@ -82,25 +82,21 @@ public class SimulationManager : MonoBehaviour
         {
             GameObject pointClone = Instantiate(pointStage1, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
             velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
-            Debug.Log(velocityMagnitude);
         }
         for (int i = 1471-((1471-8)%skipPoints); i <= 7096-((7096-8)%skipPoints); i+=(int)(skipPoints/velocityMagnitude+1))
         {
             GameObject pointClone = Instantiate(pointStage2, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
             velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
-            Debug.Log(velocityMagnitude);
         }
         for (int i = 7096-((7096-8)%skipPoints); i <= 12977-((12977-8)%skipPoints); i+=(int)(skipPoints/velocityMagnitude+1))
         {
             GameObject pointClone = Instantiate(pointStage3, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
             velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
-            Debug.Log(velocityMagnitude);
         }
         for (int i = 12977-((12977-8)%skipPoints); i <= 12983; i+=(int)(skipPoints/velocityMagnitude+1))
         {
             GameObject pointClone = Instantiate(pointStage4, new Vector3((float)getData(i,1)/100, (float)getData(i,2)/100, (float)getData(i,3)/100), Quaternion.identity);
             velocityMagnitude = Math.Sqrt(getData(i,4)*getData(i,4)+getData(i,5)*getData(i,5)+getData(i,6)*getData(i,6));
-            Debug.Log(velocityMagnitude);
         }
 
         RocketPathList = new List<GameObject>();
@@ -110,7 +106,7 @@ public class SimulationManager : MonoBehaviour
         // Stuff related to satellites
         priority = WPSA;
         // Create the list (array) of priotized satellites
-        CommunicationLink[] priorityList = prioritizeSatellites(priority, WPSA, DS54, DS34, DS24);
+        priorityList = prioritizeSatellites(WPSA, WPSA, DS54, DS34, DS24);
 
         // Stuff related to UI 
 
@@ -153,8 +149,6 @@ public class SimulationManager : MonoBehaviour
     void Update()
     {
         // This simulation manager runs the global time.
-        // Currently it just increases globalTime each frame, but we will implement UI controls later 
-        // which will enable further manipulation of time (pause/play, slider, playback speed,etc.)
         globalTime += 1*speedMultiplier;
         TimelineSlider.value = globalTime;
 
@@ -168,9 +162,6 @@ public class SimulationManager : MonoBehaviour
             RocketPathList.Add(pointClone);
         }*/
 
-        Debug.Log("TimelineSlider.value = "+TimelineSlider.value.ToString());
-        Debug.Log("SpeedSlider.value = "+SpeedSlider.value.ToString());
-        Debug.Log("speedMultiplier.value = "+speedMultiplier);
         // IndexOutOfRange exception was getting annoying, thus:
         if (globalTime > 12982)
         {
@@ -179,7 +170,7 @@ public class SimulationManager : MonoBehaviour
             speedMultiplier = 0;
             TimeText.text = "Speed: "+speedMultiplier.ToString()+"x";
         }
-        Debug.Log("globalTime: " + globalTime);
+        //Debug.Log("globalTime: " + globalTime);
 
         // Alright, lets update those satellites!
         WPSA.updateData(globalTime);
@@ -241,13 +232,13 @@ public class SimulationManager : MonoBehaviour
 
         // Update priority satellite
 
+            // OLD METHOD
+            //priority = prioritize(priority, WPSA, DS54, DS34, DS24);
 
-        // OLD METHOD
-        priority = prioritize(priority, WPSA, DS54, DS34, DS24);
 
-
-        // NEW METHOD
-        //priority = priorityList[globalTime];
+            // NEW METHOD
+            // Note: index starts at zero, but time starts at 8, so this is to allign the two 
+            priority = priorityList[globalTime-8];
 
 
         // Let's print it out
@@ -259,68 +250,73 @@ public class SimulationManager : MonoBehaviour
         //Debug.Log(priority.priorityToString());
     }
 
-    // New priotizing (least transfers)
+    // Prioritizing using the least transfers
     public static CommunicationLink[] prioritizeSatellites(CommunicationLink prioritized, CommunicationLink satellite1, CommunicationLink satellite2, CommunicationLink satellite3, CommunicationLink satellite4)
     {
-        CommunicationLink[] returnPriorityList = new CommunicationLink[12978];
-        for (int i = 0; i <= 12978; i++)
+        CommunicationLink[] returnPriorityList = new CommunicationLink[12983];
+        // We loop through each time as if this was executed in real time and see if the priority satelite needs to be switched
+        for (int i = 8; i <= 12983; i++)
         {
-            // Update all of the satellites to the "current time" (within the loop that is)
-            prioritized.checkAvailibility(i);
-            satellite1.checkAvailibility(i);
-            satellite2.checkAvailibility(i);
-            satellite3.checkAvailibility(i);
-            satellite4.checkAvailibility(i);
-            // If we lose priotized satellite, we need to switch satellites
+            // Update availibility of each satelite
+            prioritized.updateAvailibility(i);
+            satellite1.updateAvailibility(i);
+            satellite2.updateAvailibility(i);
+            satellite3.updateAvailibility(i);
+            satellite4.updateAvailibility(i);
+
+            // If we lose connection to the currently priotized satellite, we need to switch satellites
             if (!prioritized.isAvailible)
             {
                 // Need to find how long each satellite will last (see public static void method calculateAvailbilityTime below)
-                if (satellite1.isAvailible)
-                {
-                    calculateAvailbilityTime(satellite1, i);
-                }
-                if (satellite2.isAvailible)
-                {
-                    calculateAvailbilityTime(satellite2, i);
-                }
-                if (satellite3.isAvailible)
-                {
-                    calculateAvailbilityTime(satellite3, i);
-                }
-                if (satellite4.isAvailible)
-                {
-                    calculateAvailbilityTime(satellite4, i);
-                }
+                calculateAvailbilityTime(satellite1, i);
+                calculateAvailbilityTime(satellite2, i);
+                calculateAvailbilityTime(satellite3, i);
+                calculateAvailbilityTime(satellite4, i);
+
                 // With this information we can see which one will last the longest, and set prioritized to that one
-                prioritized = findGreatestAvailibilityTime(satellite1, satellite2, satellite3, satellite4);
+                if (satellite1.isAvailible || satellite2.isAvailible || satellite3.isAvailible || satellite4.isAvailible)
+                {
+                    Debug.Log("Switching now");
+                    prioritized = findGreatestAvailibilityTime(satellite1, satellite2, satellite3, satellite4);
+                }
+                // Otherwised we are cooked...
+                else
+                {
+                    Debug.Log("Blackout! Communcation is lost!");
+                }
             }
-            returnPriorityList[i] = prioritized;
+            returnPriorityList[i-8] = prioritized;
         }
         return returnPriorityList;
     }
 
     public static void calculateAvailbilityTime(CommunicationLink satellite, int initialTime)
     {
-        // Basically updating availibility time to see how long it will last.
+        // Biggest lightbulb moment I realized we need this...
+        bool temp = satellite.isAvailible;
+
+        // Basically updating availibility time and incrementing time to see how long the satellite will last
         satellite.availibleTime = 0;
         while (satellite.isAvailible)
         {
-            satellite.checkAvailibility(initialTime + satellite.availibleTime);
+            satellite.updateAvailibility(initialTime + satellite.availibleTime);
             satellite.availibleTime++;
         }
+        // Reset it after (took hours of debugging to figure this out)
+        satellite.isAvailible = temp;
     }
 
     public static CommunicationLink findGreatestAvailibilityTime(CommunicationLink s1, CommunicationLink s2, CommunicationLink s3, CommunicationLink s4)
     {
-        if (s1.availibleTime > s2.availibleTime && s2.availibleTime > s3.availibleTime && s3.availibleTime > s4.availibleTime)
+        if (s1.availibleTime > s2.availibleTime && s1.availibleTime > s3.availibleTime && s1.availibleTime > s4.availibleTime)
         {
             return s1;
         }
-        else if (s2.availibleTime > s3.availibleTime && s3.availibleTime > s4.availibleTime)
+        else if (s2.availibleTime > s1.availibleTime && s2.availibleTime > s3.availibleTime && s2.availibleTime > s4.availibleTime)
         {
             return s2;
         }
-        else if (s3.availibleTime > s4.availibleTime)
+        else if (s3.availibleTime > s2.availibleTime && s3.availibleTime > s1.availibleTime && s3.availibleTime > s4.availibleTime)
         {
             return s3;
         }
@@ -331,6 +327,7 @@ public class SimulationManager : MonoBehaviour
     }
 
 
+    // OLD METHOD
     // Kinda clunky to understand, probably a more "efficient" and easier to understand way to do this
     public static CommunicationLink prioritize(CommunicationLink priorized, CommunicationLink satellite1, CommunicationLink satellite2, CommunicationLink satellite3, CommunicationLink satellite4)
     {

@@ -38,7 +38,7 @@ public class CommunicationLink
     public void updateData(int time)
     {
         // See method below (this method needs to be referenced seperately by Simulation Manager at times, thus is its own method)
-        checkAvailibility(time);
+        updateAvailibility(time);
         // If satellite is availible, update distance
         if (isAvailible)
         {
@@ -68,7 +68,7 @@ public class CommunicationLink
         wasAvailible = isAvailible;
     }
 
-    public void checkAvailibility(int time)
+    public void updateAvailibility(int time)
     {
         // Check to see if satellite is availible by checing the availibity collumn of Artemis data
         isAvailible = (SimulationManager.getData(time, availibilityColumn)==1);
